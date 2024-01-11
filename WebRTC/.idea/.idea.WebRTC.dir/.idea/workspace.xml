@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="38733a75-620d-4b14-9881-36d697350cf8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../AllSkyFree_Sky_EpicBlueSunset_Equirect.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AllSkyFree_Sky_EpicBlueSunset_Equirect.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preMaterial/plugin.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/preMaterial/plugin.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preMaterial/util/addPanel/addPanel.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/preMaterial/util/addPanel/addPanel.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preskybox/assets/蓝天白云1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preskybox/assets/蓝天白云1.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preskybox/panel/panel.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/preskybox/panel/panel.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preskybox/panel/panel.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/preskybox/panel/panel.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/preskybox/preskybox.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/preskybox/preskybox.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/Smoke.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/Smoke.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/inspector.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/inspector.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/inspector.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/inspector.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/material/fire.material" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/material/fire.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/material/plane_fire_process_material.tres" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/material/plane_fire_process_material.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/material/smoke_black_geomat.tres" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/material/smoke_black_geomat.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/material/smoke_fog_geomat.tres" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/material/smoke_fog_geomat.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/material/smoke_smoke_geomat.tres" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/material/smoke_smoke_geomat.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../addons/smoke_add/smoke_add.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../addons/smoke_add/smoke_add.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../icon.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../icon.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../industrial_sunset_puresky_2k.hdr" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../industrial_sunset_puresky_2k.hdr.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kloofendal_48d_partly_cloudy_puresky_1k.exr" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kloofendal_48d_partly_cloudy_puresky_1k.exr.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../material/塑料.tres" beforeDir="false" afterPath="$PROJECT_DIR$/../material/塑料.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../models/c919/c_919_max.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../models/c919/c_919_max.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../models/hangar/hangar.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../models/hangar/hangar.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../night.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../night.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../project.godot" beforeDir="false" afterPath="$PROJECT_DIR$/../project.godot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../satara_night_no_lamps_1k.exr" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../satara_night_no_lamps_1k.exr.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scenes/plane_col.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../scenes/plane_col.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scripts/Camera.gd" beforeDir="false" afterPath="$PROJECT_DIR$/../scripts/Camera.gd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../worldenv/dayenv.tres" beforeDir="false" afterPath="$PROJECT_DIR$/../worldenv/dayenv.tres" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../天空盒demo.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../天空盒demo.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../工厂与飞机运行.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../工厂与飞机运行.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../软管穿孔.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../软管穿孔.tscn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../连续动画.tscn" beforeDir="false" afterPath="$PROJECT_DIR$/../连续动画.tscn" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2ZGCVHdWHUFqvYGCMuDIuhdu9sz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\admin\\AppData\\Local\\Symbols\\src"
+    ]
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="38733a75-620d-4b14-9881-36d697350cf8" name="Changes" comment="" />
+      <created>1702039051513</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1702039051513</updated>
+      <workItem from="1702039053623" duration="12000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
