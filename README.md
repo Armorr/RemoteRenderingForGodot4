@@ -1,4 +1,4 @@
-# Remote Rendering For Godot4
+# Remote Rendering For Godot 4
 A Remote Rendering（Cloud Rendering）solution for Godot4, based on C#. It is similar to [Unity Render Streaming]([Unity-Technologies/UnityRenderStreaming: Streaming server for Unity (github.com)](https://github.com/Unity-Technologies/UnityRenderStreaming)), which provides high quality rendering abilities via browser.
 
 
@@ -70,7 +70,7 @@ An example of the `*.csproj` file is as follows:
 
 #### Notice
 
-Please ensure that the aforementioned preparations are done **using the SAME 32-bit or 64-bit architecture**. This project is 64-bit.
+Please ensure that the aforementioned preparations are done **using the SAME 32-bit or 64-bit architecture**. This repository is 64-bit.
 
 
 
@@ -78,13 +78,13 @@ Please ensure that the aforementioned preparations are done **using the SAME 32-
 
 ```
 <root>
-├── RemoteRendering             // C# files for RemoteRendering module
-	├── InputSystem             // C# files for input-bindings from browser
-├── WebRTC                      // C# files for WebRTC-bindings
+├── RemoteRendering				// C# files for RemoteRendering module
+	├── InputSystem				// C# files for input-bindings from browser
+├── WebRTC						// C# files for WebRTC-bindings
 	├── Codec					// C# files for Codecs
 		├── FFmpegLibraries		// .dll files for FFmpeg library
 ├── datachannel.dll				// .dll file compiled from the libdatachannel library
-└── WebApp                      // Web application for signaling
+└── WebApp						// Web application for signaling
 ```
 
 
