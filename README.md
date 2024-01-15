@@ -5,7 +5,7 @@ A Remote Rendering（Cloud Rendering）solution for Godot4, based on C#. It is s
 
 ## Demo
 
-<video src="demo/demo.mp4"></video>
+<img src="https://github.com/Armorr/RemoteRenderingForGodot4/blob/main/demo/demo.gif" alt="show" />
 
 
 
