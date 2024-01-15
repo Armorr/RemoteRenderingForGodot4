@@ -9,32 +9,9 @@ namespace Godot.WebRTC
 {
     public class FFmpegBinariesHelper
     {
-        internal static void RegisterFFmpegBinaries()
+        internal static void RegisterFFmpegDlls()
         {
             DynamicallyLoadedBindings.LibrariesPath = "D:\\WebDownloads\\FFmpeg.AutoGen-master\\FFmpeg.AutoGen-master\\FFmpeg\\bin\\x64";
-            return;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                //var current = System.Environment.CurrentDirectory;
-                var current = "D:\\WebDownloads\\FFmpeg.AutoGen-master\\FFmpeg.AutoGen-master";
-                var probe = Path.Combine("FFmpeg", "bin", System.Environment.Is64BitProcess ? "x64" : "x86");
-
-                while (current != null)
-                {
-                    var ffmpegBinaryPath = Path.Combine(current, probe);
-
-                    if (Directory.Exists(ffmpegBinaryPath))
-                    {
-                        GD.Print($"FFmpeg binaries found in: {ffmpegBinaryPath}");
-                        DynamicallyLoadedBindings.LibrariesPath = ffmpegBinaryPath;
-                        return;
-                    }
-
-                    current = Directory.GetParent(current)?.FullName;
-                }
-            }
-            else
-                throw new NotSupportedException(); // fell free add support for platform of your choose
         }
         
         public static unsafe void SetupLogging()

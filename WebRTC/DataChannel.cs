@@ -34,6 +34,8 @@ namespace Godot.WebRTC
         private RtcErrorCallbackFunc onError;
         private RtcMessageCallbackFunc onMessage;
 
+        public Action<byte[]> OnInputEvent;
+
         public DataChannel(int id) : base(id)
         {
             disposed = false;
@@ -76,9 +78,6 @@ namespace Godot.WebRTC
         {
             Opened?.Invoke(id);
             GD.Print("Channel On Open!");
-            //string message = "Ping";
-            //if (NativeMethods.rtcSendMessage(Id, Marshal.StringToHGlobalAnsi(message), -1) < 0)
-                //throw new Exception("Error from Channel OnOpen.");
         }
 
         private new void OnClosed(int id, IntPtr ptr)
@@ -101,13 +100,9 @@ namespace Godot.WebRTC
                 byte[] messageData = new byte[size];
                 Marshal.Copy(messagePtr, messageData, 0, size);
                 //messageString = Encoding.UTF8.GetString(messageData);
-                MessageSerializer.Deserialize(messageData);
+                OnInputEvent?.Invoke(messageData);
+                //MessageSerializer.Deserialize(messageData);
             }
-            //MessageReceived?.Invoke(messageString);
-            //GD.Print("Channel Get Message: " + messageString);
-            //string mes = "Ping";
-            //if (NativeMethods.rtcSendMessage(Id, Marshal.StringToHGlobalAnsi(mes), -1) < 0)
-            //    throw new Exception("Error from Channel OnOpen.");
         }
 
     }

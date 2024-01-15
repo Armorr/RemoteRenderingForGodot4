@@ -26,7 +26,7 @@ namespace Godot.RemoteRendering.Signaling
         private CancellationTokenSource _cancellationTokenSource;
 
         public string Url { get { return m_url; } }
-        public bool printMessage = false;
+        public bool printMessage = true;
 
         public bool isSample = false;
 
@@ -38,7 +38,7 @@ namespace Godot.RemoteRendering.Signaling
         public event OnIceCandidateHandler OnIceCandidate;
 
         public WebSocketSignaling(SynchronizationContext mainThreadContext) {
-            m_url = isSample ? "ws://219.224.167.248:8000/server" : "ws://219.224.167.236";
+            m_url = isSample ? "ws://219.224.167.248:8000/server" : "ws://219.224.167.226";
             m_timeout = 10.0f;
             m_mainThreadContext = mainThreadContext;
 
@@ -161,7 +161,7 @@ namespace Godot.RemoteRendering.Signaling
         private void WSManage(CancellationToken cancellationToken)
         {
             WSCreate();
-            // GD.Print($"Signaling: Connected to WS {m_url} OK!");
+            GD.Print($"Signaling: Connected to WS {m_url} OK!");
             while (m_running && (!cancellationToken.IsCancellationRequested))
             {
                 m_webSocket.Poll();

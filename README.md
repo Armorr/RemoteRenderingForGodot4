@@ -5,7 +5,7 @@ A Remote Rendering（Cloud Rendering）solution for Godot4, based on C#. It is s
 
 ## Demo
 
-
+<video src="demo/demo.mp4"></video>
 
 
 
@@ -45,7 +45,7 @@ Secondly, you should put [.dll files](https://github.com/Ruslan-B/FFmpeg.AutoGen
 
 #### Godot 4
 
-The Godot Engine for this project should support C#. You can directly download the .NET version of Godot from [Download for Windows - Godot Engine](https://godotengine.org/download/windows/) or manually compile it with the Mono module enabled.
+The Godot Engine for this project should support C#. You can directly download the .NET version of Godot from [Download for Windows - Godot Engine](https://godotengine.org/download/windows/) or manually compile the source code with the Mono module enabled.
 
 #### Project Settings
 
@@ -70,7 +70,8 @@ An example of the `*.csproj` file is as follows:
 
 #### Notice
 
-Please ensure that the aforementioned preparations are done **using the SAME 32-bit or 64-bit architecture**. This repository is 64-bit.
++ Theoretically, this project supports multiple platforms, but currently, due to limitations with dynamic linking libraries, development has been focused exclusively on the **Windows platform**.
++ Please ensure that the aforementioned preparations are done **using the SAME 32-bit or 64-bit architecture**. This repository is 64-bit.
 
 
 

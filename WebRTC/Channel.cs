@@ -28,10 +28,7 @@ namespace Godot.WebRTC
 
         public void SendMessage(byte[] message)
         {
-            //GCHandle handle = GCHandle.Alloc(message, GCHandleType.Pinned);
-            //IntPtr bytes = handle.AddrOfPinnedObject();
-            //NativeMethods.rtcSendMessage(Id, bytes, message.Length);
-            //handle.Free();
+           
         }
 
         public void OnOpen(int id, IntPtr ptr)
