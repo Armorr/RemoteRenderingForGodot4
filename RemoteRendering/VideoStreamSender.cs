@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,19 +80,15 @@ namespace Godot.RemoteRendering
             AddChild(_frameSource);
         }
 
-        public void AddVideo(int pc, RtcTrackInit init)
+        public void AddVideo(PeerConnection pc, RtcTrackInit init)
         {
-            int tr = NativeMethods.rtcAddTrackEx(pc, ref init);
-            if (tr < 0)
-            {
-                throw new Exception("Error from rtcAddTrackEx.");
-            }
-            Track track = new Track(tr);
+            Track track = pc.AddTrackEx(init);
+            int tr = track.Id;
             
             SetPacketizationHandler(tr, init);
-            if (_mapPeerIdAndTrack.ContainsKey(pc))
+            if (_mapPeerIdAndTrack.ContainsKey(pc.Id))
             {
-                _mapPeerIdAndTrack.TryGetValue(pc, out Dictionary<int, Track>tDic);
+                _mapPeerIdAndTrack.TryGetValue(pc.Id, out Dictionary<int, Track>tDic);
                 tDic.Add(tr, track);
             }
             else
@@ -103,7 +97,7 @@ namespace Godot.RemoteRendering
                 {
                     { tr, track }
                 };
-                _mapPeerIdAndTrack.Add(pc, tDic);
+                _mapPeerIdAndTrack.Add(pc.Id, tDic);
             }
             track.Opened += OnOpen;
             track.Closed += OnClose;
@@ -276,7 +270,7 @@ namespace Godot.RemoteRendering
             {
                 NativeMethods.rtcSetNeedsToSendRtcpSr(id);
             }
-            
+            //GD.PrintRich("[color=red]Sending![/color]");
             if (NativeMethods.rtcSendMessage(id, dataPtr, size) < 0)
             {
                 GD.Print("------------rtcSendMessage Error!");

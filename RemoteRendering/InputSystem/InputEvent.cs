@@ -1,8 +1,21 @@
+using System.Text;
 using System.IO;
+using System;
 
 
 namespace Godot.RemoteRendering.InputSystem
 {
+    public enum EventFormat
+    {
+        STAT,
+        TOUC,
+        TSCR,
+        MOUS,
+        KEYS,
+        GPAD,
+        TEXT
+    }
+    
     public class InputEvent
     {
         public int format;
@@ -10,30 +23,26 @@ namespace Godot.RemoteRendering.InputSystem
         public int deviceId;
         public double time;
 
-        public const int Size = 20;  // 输入事件的大小
-
-        public static InputEvent Parse(byte[] data)
+        public const int Size = 20;
+        
+        public EventFormat GetFormat()
         {
-            using (MemoryStream stream = new MemoryStream(data))
-            using (BinaryReader reader = new BinaryReader(stream))
-            {
-                InputEvent inputEvent = new InputEvent();
-                inputEvent.format = reader.ReadInt32();
-                inputEvent.size = reader.ReadInt32();
-                inputEvent.deviceId = reader.ReadInt32();
-                inputEvent.time = reader.ReadDouble();
-                return inputEvent;
-            }
+            byte[] bytes = new byte[4];
+            bytes[0] = (byte)(format >> 24);
+            bytes[1] = (byte)(format >> 16);
+            bytes[2] = (byte)(format >> 8);
+            bytes[3] = (byte)format;
+            return (EventFormat)Enum.Parse(typeof(EventFormat), Encoding.ASCII.GetString(bytes));
         }
     }
     
-    public class StateEvent
+    public class StateEvent : InputEvent
     {
-        public InputEvent baseEvent;
-        public int stateFormat;
         public byte[] stateData;
+    }
 
-        // TouchState 的字段
+    public class TouchEvent : StateEvent
+    {
         public int touchId;
         public float[] position;
         public float[] delta;

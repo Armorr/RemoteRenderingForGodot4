@@ -285,9 +285,11 @@ namespace Godot.RemoteRendering.Signaling
             }
             if (data is string s) {
                 m_webSocket.SendText(s);
+                GD.PrintErr(s);
             }
             else {
                 m_webSocket.SendText(Json.Stringify((Variant)data));
+                GD.PrintErr(Json.Stringify((Variant)data));
             }
         }
 

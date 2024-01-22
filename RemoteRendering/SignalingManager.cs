@@ -15,6 +15,7 @@ namespace Godot.RemoteRendering
         //private VideoStreamSender sender;
         private List<VideoStreamSender> _senders = new List<VideoStreamSender>();
         private readonly Dictionary<string, PeerConnection> _mapConnectionIdAndPeer = new();
+        private InputReceiver _inputReceiver = new ();
         
         public event Action onStart;
         public event Action<string> onCreatedConnection;
@@ -24,7 +25,7 @@ namespace Godot.RemoteRendering
         public event Action<string> onConnect;
         public event Action<string> onDisconnect;
 
-        private VideoStreamSender _sender = new(30);
+        private VideoStreamSender _sender = new(60);
 
         static WebSocketSignaling CreateSignaling() {
             return new WebSocketSignaling(SynchronizationContext.Current);
@@ -90,7 +91,7 @@ namespace Godot.RemoteRendering
             };
             VideoStreamSender sender = new VideoStreamSender(30);
             AddChild(sender);
-            sender.AddVideo(peer.Id, init);
+            sender.AddVideo(peer, init);
             _senders.Add(sender);
             DataChannel dc = peer.CreateDataChannel("ping-pong");
             peer.SetLocalDescription(null);
@@ -131,6 +132,7 @@ namespace Godot.RemoteRendering
             peer.OnSendOffer += m_signal.SendOffer;
             peer.OnSendAnswer += m_signal.SendAnswer;
             peer.OnSendCandidate += m_signal.SendCandidate;
+            peer.DataChannelForInput += InputReceiverAddChannel;
 
             return peer;
         }
@@ -188,7 +190,7 @@ namespace Godot.RemoteRendering
             };
             //VideoStreamSender sender = new VideoStreamSender();
             //AddChild(sender);
-            _sender.AddVideo(pc.Id, init);
+            _sender.AddVideo(pc, init);
             //_senders.Add(sender);
             //DataChannel dc = pc.CreateDataChannel("input");
             pc.OnGotRemoteDescription(e.sdp, "offer");
@@ -197,6 +199,11 @@ namespace Godot.RemoteRendering
         void SendOffer(string id, string sdp)
         {
             
+        }
+
+        private void InputReceiverAddChannel(DataChannel dc)
+        {
+            _inputReceiver.SetChannel(dc);
         }
 
     }

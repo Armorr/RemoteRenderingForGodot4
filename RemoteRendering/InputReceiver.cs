@@ -13,7 +13,7 @@ namespace Godot.RemoteRendering
         
         public InputReceiver()
         {
-            
+            EventParser.OnSendEvent += InputManager.HandleEvent;
         }
 
         public void SetChannel(DataChannel dc)

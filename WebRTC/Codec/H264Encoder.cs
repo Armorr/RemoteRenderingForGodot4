@@ -50,7 +50,7 @@ namespace Godot.WebRTC
             _codecContext -> pix_fmt = AVPixelFormat.AV_PIX_FMT_YUV420P;
             _codecContext -> time_base = new AVRational { num = 1, den = fps };
             _codecContext -> framerate = new AVRational { num = fps, den = 1 };
-            _codecContext -> profile = ffmpeg.FF_PROFILE_H264_BASELINE;
+            _codecContext -> profile = ffmpeg.FF_PROFILE_H264_HIGH;
             
             //_codecContext -> gop_size = 10;
             //_codecContext -> max_b_frames = 10;

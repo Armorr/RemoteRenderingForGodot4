@@ -64,6 +64,7 @@ namespace Godot.WebRTC
         public Action<RtcIceState> IceStateChanged { get; set; }
         public Action<RtcGatheringState> GatheringStateChanged { get; set; }
         public Action<RtcSignalingState> SignalingStateChanged {get; set; }
+        public Action<DataChannel> DataChannelForInput { get; set; }
         public int Id { get; private set; }
         private bool disposed;
         private RtcConfiguration config;
@@ -82,6 +83,7 @@ namespace Godot.WebRTC
         private RtcSignalingStateCallbackFunc onSignalingStateChange;
         private RtcIceStateChangeCallbackFunc onIceStateChange;
         private RtcDataChannelCallbackFunc onDataChannel;
+        private RtcTrackCallbackFunc onTrack;
 
         public PeerConnection(string connectionId, ref RtcConfiguration config)
         {
@@ -117,6 +119,7 @@ namespace Godot.WebRTC
             onSignalingStateChange = OnSignalingStateChange;
             onIceStateChange = OnIceStateChange;
             onDataChannel = OnDataChannel;
+            onTrack = OnTrack;
 
             if (NativeMethods.rtcSetLocalDescriptionCallback(Id, onLocalDescription) < 0)
                 throw new Exception("Error from rtcSetLocalDescriptionCallback.");
@@ -137,6 +140,9 @@ namespace Godot.WebRTC
                 throw new Exception("Error from rtcSetSignalingStateChangeCallback.");
             
             if (NativeMethods.rtcSetDataChannelCallback(Id, onDataChannel) < 0)
+                throw new Exception("Error from rtcSetDataChannelCallback.");
+            
+            if (NativeMethods.rtcSetTrackCallback(Id, onTrack) < 0)
                 throw new Exception("Error from rtcSetDataChannelCallback.");
         }
 
@@ -284,6 +290,12 @@ namespace Godot.WebRTC
             GD.PrintRich("[color=red]DataChannel!!![/color]");
             DataChannel dataChannel = new DataChannel(dc);
             _mapIdDataChannel.Add(dc, dataChannel);
+            DataChannelForInput?.Invoke(dataChannel);
+        }
+
+        public void OnTrack(int pc, int tr, IntPtr ptr)
+        {
+            GD.PrintRich("[color=red]PC add Track OK![/color]");
         }
 
     }
