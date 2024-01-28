@@ -29,7 +29,7 @@ namespace Godot.WebRTC
         public ushort sequenceNumber;
         public uint timestamp;
 
-        public RtcNalUnitSeparator nalUnitSeparator;
+        public RtcNalUnitSeparator nalSeparator;
         public ushort maxFragmentSize;
         public RtcObuPacketization obuPacketization;
     }

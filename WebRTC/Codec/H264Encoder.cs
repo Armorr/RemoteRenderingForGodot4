@@ -2,36 +2,43 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using FFmpeg.AutoGen.Abstractions;
-using FFmpeg.AutoGen.Bindings.DynamicallyLoaded;
+
 
 namespace Godot.WebRTC
 {
-    public unsafe class H264Encoder
+    public unsafe class H264Encoder : VideoEncoder
     {
         private AVCodecContext* _codecContext;
         private SwsContext* _swsContext;
         private AVCodec* _codec;
-        private readonly AVPixelFormat _pixelFormat;
+        private AVPixelFormat _pixelFormat;
         private int _width;
         private int _height;
         private int _defaultSize = 1000;
-        
-        public H264Encoder(int width, int height, AVPixelFormat pixelFormat, int fps)
+        private bool _initialized = false;
+
+        public H264Encoder()
         {
-            this._width = width;
-            this._height = height;
-            this._pixelFormat = pixelFormat;
             
-            InitializeEncoder(fps);
-            InitializeSwsContext();
+        }
+        
+        public override void Initialize(int width, int height, AVPixelFormat pixelFormat, int fps)
+        {
+            if (!_initialized)
+            {
+                this._width = width;
+                this._height = height;
+                this._pixelFormat = pixelFormat;
+                
+                base.Initialize();
+                InitializeEncoder(fps);
+                InitializeSwsContext();
+                _initialized = true;
+            }
         }
 
         private void InitializeEncoder(int fps)
         {
-            FFmpegBinariesHelper.RegisterFFmpegDlls();
-            DynamicallyLoadedBindings.Initialize();
-            FFmpegBinariesHelper.SetupLogging();
-            
             _codec = ffmpeg.avcodec_find_encoder(AVCodecID.AV_CODEC_ID_H264);
             if (_codec == null)
             {
@@ -43,8 +50,7 @@ namespace Godot.WebRTC
             {
                 throw new Exception("Could not allocate codec context.");
             }
-
-            //_codecContext -> bit_rate = 3000000;
+            
             _codecContext -> width = _width;
             _codecContext -> height = _height;
             _codecContext -> pix_fmt = AVPixelFormat.AV_PIX_FMT_YUV420P;
@@ -52,12 +58,13 @@ namespace Godot.WebRTC
             _codecContext -> framerate = new AVRational { num = fps, den = 1 };
             _codecContext -> profile = ffmpeg.FF_PROFILE_H264_HIGH;
             
+            //_codecContext -> bit_rate = 2000000;
             //_codecContext -> gop_size = 10;
             //_codecContext -> max_b_frames = 10;
             
             //ffmpeg.av_opt_set(_codecContext->priv_data, "preset", "ultrafast", 0);
-            ffmpeg.av_opt_set(_codecContext -> priv_data, "tune", "zerolatency", 0);
             //ffmpeg.av_opt_set(_codecContext -> priv_data, "tune", "stillimage", 0);
+            ffmpeg.av_opt_set(_codecContext -> priv_data, "tune", "zerolatency", 0);
             
             if (ffmpeg.avcodec_open2(_codecContext, _codec, null) < 0)
             {
@@ -78,10 +85,8 @@ namespace Godot.WebRTC
             }
         }
         
-        private static int times = 1;
-        public int EncodeFrame(Image image, long pts, ref IntPtr dataPtr)
+        public override int EncodeFrame(Image image, long pts, ref IntPtr dataPtr)
         {
-            ulong startTime = PluginUtils.CurrentTimeInMicroseconds();
             int width = image.GetWidth();
             int height = image.GetHeight();
             
@@ -134,7 +139,7 @@ namespace Godot.WebRTC
                 }
                 else
                 {
-                    throw new InvalidOperationException($"error from avcodec_receive_packet: {result}");
+                    throw new InvalidOperationException($"Error from avcodec_receive_packet: {result}");
                 }
 
                 if (isPacketValid)
@@ -149,8 +154,6 @@ namespace Godot.WebRTC
             ffmpeg.av_frame_free(&dstFrame);
             ffmpeg.av_packet_free(&packet);
             
-            //GD.Print($"The {times} to Encode Frame cost = " + (PluginUtils.CurrentTimeInMicroseconds() - startTime));
-            //GD.Print($"The {times++} to Encode Frame Get Data size = " + totalSize);
             return totalSize;
         }
         
@@ -166,7 +169,6 @@ namespace Godot.WebRTC
 
             if (data != null)
             {
-                // Assuming data is in correct format for pixFmt and is the correct size
                 Marshal.Copy(data, 0, (IntPtr)frame->data[0], data.Length);
             }
 

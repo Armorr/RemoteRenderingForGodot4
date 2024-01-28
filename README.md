@@ -86,6 +86,7 @@ An example of the `*.csproj` file is as follows:
 		├── FFmpegLibraries		// .dll files for FFmpeg library
 ├── datachannel.dll				// .dll file compiled from the libdatachannel library
 └── WebApp						// Web application for signaling
+└── script						// Other GDScript
 ```
 
 

@@ -3,42 +3,38 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using FFmpeg.AutoGen.Abstractions;
 using Godot.WebRTC;
-
 
 namespace Godot.RemoteRendering
 {
-    
-    public partial class VideoStreamSender : StreamSender
+    public partial class AudioStreamSender : StreamSender
     {
         private Dictionary<int, Dictionary<int, Track>> _mapPeerIdAndTrack = new ();
-        private SendManager _sendManager;
+        private SendManager _sendManager = new(50);
         
         private Thread _sendThread;
         private CancellationTokenSource _cancellationTokenSource;
 
-        private VideoEncoder _encoder;
-        private VideoFrameSource _frameSource;
-        private int _fps;
-
+        private AudioEncoder _encoder;
+        private AudioFrameSource _frameSource;
+        private int _mixRate = 48000;
+        
         private ulong _startTime;
         private uint _startTimestamp = 10000;
         private bool _isRunning = false;
-        
-        public VideoStreamSender(int fps)
+
+        public AudioStreamSender()
         {
-            this._fps = fps;
-            _sendManager = new SendManager(fps);
+            
         }
-        
+
         public override void _EnterTree()
         {
-            _frameSource = new VideoFrameSource();
+            _frameSource = new AudioFrameSource();
             AddChild(_frameSource);
         }
 
-        public void AddVideo(PeerConnection pc, RtcTrackInit init)
+        public void AddAudio(PeerConnection pc, RtcTrackInit init)
         {
             Track track = pc.AddTrackEx(init);
             int tr = track.Id;
@@ -59,9 +55,9 @@ namespace Godot.RemoteRendering
             track.Opened += OnOpen;
             track.Closed += OnClose;
             
-            GD.Print("VideoStreamSender Add Track OK! with startTimestamp = " + _startTimestamp);
+            GD.Print("AudioStreamSender Add Track OK! with startTimestamp = " + _startTimestamp);
         }
-
+        
         public void SetPacketizationHandler(int tr, RtcTrackInit init)
         {
             RtcPacketizationHandlerInit packetizationHandlerInit = new RtcPacketizationHandlerInit
@@ -74,29 +70,25 @@ namespace Godot.RemoteRendering
                 timestamp = _startTimestamp
             };
             switch(init.codec) {
-                case RtcCodec.RTC_CODEC_H264:
+                case RtcCodec.RTC_CODEC_OPUS:
                 {
-                    packetizationHandlerInit.clockRate = (uint)_fps * 1000;
-                    if (NativeMethods.rtcSetH264PacketizationHandler(tr, ref packetizationHandlerInit) < 0)
+                    packetizationHandlerInit.clockRate = (uint)_mixRate;
+                    if (NativeMethods.rtcSetOpusPacketizationHandler(tr, ref packetizationHandlerInit) < 0)
                     {
-                        GD.PrintErr("VideoStreamSender: Track SetPacketizationHandler Error1!");
+                        GD.PrintErr("AudioStreamSender: Track SetPacketizationHandler Error!");
                     }
-                    _encoder = new H264Encoder();
+                    _encoder = new OpusEncoder();
                     break;
                 }
-                case RtcCodec.RTC_CODEC_H265:
+                case RtcCodec.RTC_CODEC_AAC:
                 {
                     break;
                 }
-                case RtcCodec.RTC_CODEC_VP8:
+                case RtcCodec.RTC_CODEC_PCMA:
                 {
                     break;
                 }
-                case RtcCodec.RTC_CODEC_VP9:
-                {
-                    break;
-                }
-                case RtcCodec.RTC_CODEC_AV1:
+                case RtcCodec.RTC_CODEC_PCMU:
                 {
                     break;
                 }
@@ -108,11 +100,11 @@ namespace Godot.RemoteRendering
             }
             if (NativeMethods.rtcChainRtcpSrReporter(tr) < 0)
             {
-                GD.PrintErr("VideoStreamSender: Track rtcChainRtcpSrReporter Error!");
+                GD.PrintErr("AudioStreamSender: Track rtcChainRtcpSrReporter Error!");
             }
             if (NativeMethods.rtcChainRtcpNackResponder(tr, 512) < 0)
             {
-                GD.PrintErr("VideoStreamSender: Track rtcChainRtcpNackResponder Error!");
+                GD.PrintErr("AudioStreamSender: Track rtcChainRtcpNackResponder Error!");
             }
         }
 
@@ -123,10 +115,7 @@ namespace Godot.RemoteRendering
                 _isRunning = true;
                 _sendManager.OpenTrack(id);
                 GD.PrintRich($"[color=red]Track {id} Opened![/color]");
-                _encoder.Initialize(_frameSource.GetImageWidth(),
-                    _frameSource.GetImageHeight(),
-                    AVPixelFormat.AV_PIX_FMT_RGB24,
-                    _fps);
+                _encoder.Initialize(_frameSource.GetMixRate(), _frameSource.GetChannels());
                 _cancellationTokenSource = new CancellationTokenSource();
                 _sendThread = new Thread(() => Send(_cancellationTokenSource.Token));
                 _sendThread.Start();
@@ -158,25 +147,26 @@ namespace Godot.RemoteRendering
                 }
             }
         }
+        
 
         private void Send(CancellationToken cancellationToken)
         {
+            _frameSource.ClearBuffer();
             _startTime = PluginUtils.CurrentTimeInMicroseconds();
             while (!cancellationToken.IsCancellationRequested)
             {
-                _sendManager.NextSend();
-                ulong sampleTime = _sendManager.GetSampleTime();
                 IntPtr dataPtr = IntPtr.Zero;
-                int dataSize = _encoder.EncodeFrame(_frameSource.GetFrameData(), (long)sampleTime, ref dataPtr);
+                int dataSize = _encoder.EncodeFrame(_frameSource.GetAudioFrames(960), ref dataPtr);
                 if (dataSize > 0)
                 {
-                    sampleTime = _sendManager.GetSampleTime();
+                    _sendManager.NextSend();
+                    ulong sampleTime = _sendManager.GetSampleTime();
                     ulong currentTime = PluginUtils.CurrentTimeInMicroseconds();
                     ulong elapsed = currentTime - _startTime;
                     
                     if (sampleTime > elapsed)
                     {
-                        //GD.PrintRich($"[color=green]{sampleTime - elapsed}[/color]");
+                        //GD.PrintRich($"[color=green]{realSampleTime - elapsed}[/color]");
                         Task.Delay((int)((sampleTime - elapsed) / 1000)).Wait();
                     }
 
@@ -226,5 +216,5 @@ namespace Godot.RemoteRendering
         }
 
     }
-
 }
+

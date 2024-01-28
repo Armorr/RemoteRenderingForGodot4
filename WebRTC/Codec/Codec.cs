@@ -7,18 +7,59 @@ using FFmpeg.AutoGen.Bindings.DynamicallyLoaded;
 
 namespace Godot.WebRTC
 {
+
+    public class Encoder
+    {
+        private static bool Initialized = false;
+        public void Initialize()
+        {
+            if (!Initialized)
+            {
+                FFmpegBinariesHelper.RegisterFFmpegDlls();
+                DynamicallyLoadedBindings.Initialize();
+                FFmpegBinariesHelper.SetupLogging();
+                Initialized = true;
+            }
+        }
+    }
+
+    public class VideoEncoder : Encoder
+    {
+        public virtual void Initialize(int width, int height, AVPixelFormat pixelFormat, int fps)
+        {
+            base.Initialize();
+        }
+
+        public virtual int EncodeFrame(Image image, long pts, ref IntPtr dataPtr)
+        {
+            return -1;
+        }
+    }
+
+    public class AudioEncoder : Encoder
+    {
+        public virtual void Initialize(int sampleRate, int channels)
+        {
+            base.Initialize();
+        }
+
+        public virtual int EncodeFrame(Vector2[] source, ref IntPtr dataPtr)
+        {
+            return -1;
+        }
+    }
+    
     public class FFmpegBinariesHelper
     {
         internal static void RegisterFFmpegDlls()
         {
-            DynamicallyLoadedBindings.LibrariesPath = "D:\\WebDownloads\\FFmpeg.AutoGen-master\\FFmpeg.AutoGen-master\\FFmpeg\\bin\\x64";
+            DynamicallyLoadedBindings.LibrariesPath = ".\\FFmpegLibraries";
         }
         
         public static unsafe void SetupLogging()
         {
             ffmpeg.av_log_set_level(ffmpeg.AV_LOG_VERBOSE);
-
-            // do not convert to local function
+            
             av_log_set_callback_callback logCallback = (p0, level, format, vl) =>
             {
                 if (level > ffmpeg.av_log_get_level()) return;

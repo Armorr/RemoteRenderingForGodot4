@@ -1,14 +1,10 @@
-using System;
-using Godot;
-using FFmpeg.AutoGen;
 
 namespace Godot.RemoteRendering
 {
-    [GlobalClass]
-    public partial class VideoFrameSource : Node3D
+    public partial class VideoFrameSource : MediaSource
     {
-        private Viewport viewport;
-        private Image frameImage;
+        private Viewport _viewport;
+        private Image _frameImage;
 
         public VideoFrameSource()
         {
@@ -18,35 +14,34 @@ namespace Godot.RemoteRendering
         public override void _EnterTree()
         {
             base._EnterTree();
-            GD.Print("EnterTree2");
-            viewport = GetTree().CurrentScene.GetViewport();
-            frameImage = viewport.GetTexture().GetImage();
+            _viewport = GetTree().CurrentScene.GetViewport();
+            _frameImage = _viewport.GetTexture().GetImage();
         }
 
         public int GetImageWidth()
         {
-            return frameImage.GetWidth();
+            return _frameImage.GetWidth();
         }
 
         public int GetImageHeight()
         {
-            return frameImage.GetHeight();
+            return _frameImage.GetHeight();
         }
 
         public Image GetFrameData()
         {
-            return frameImage;
+            return _frameImage;
         }
 
         public Image.Format GetFrameFormat()
         {
-            return frameImage.GetFormat();
+            return _frameImage.GetFormat();
         }
 
         public override void _Process(double delta)
         {
             base._Process(delta);
-            frameImage = viewport.GetTexture().GetImage();
+            _frameImage = _viewport.GetTexture().GetImage();
         }
     }
 }

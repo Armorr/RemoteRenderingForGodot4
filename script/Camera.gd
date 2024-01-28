@@ -74,6 +74,9 @@ func _input(event):
 		return true
 	
 	if event is InputEventScreenTouch:
+		if $"../Control/Button2".get_global_rect().has_point(event.position):
+			$"../Control/Button2".emit_signal("pressed")
+			return true
 		handle_screen(event)
 		return true
 	

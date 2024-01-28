@@ -11,10 +11,11 @@ namespace Godot.RemoteRendering
 {
     [GlobalClass]
     public partial class SignalingManager : Node {
-        private readonly WebSocketSignaling m_signal;
-        //private VideoStreamSender sender;
-        private List<VideoStreamSender> _senders = new List<VideoStreamSender>();
-        private readonly Dictionary<string, PeerConnection> _mapConnectionIdAndPeer = new();
+        
+        private readonly WebSocketSignaling _signal;
+
+        private List<VideoStreamSender> _senders = new ();
+        private readonly Dictionary<string, PeerConnection> _mapConnectionIdAndPeer = new ();
         private InputReceiver _inputReceiver = new ();
         
         public event Action onStart;
@@ -25,31 +26,31 @@ namespace Godot.RemoteRendering
         public event Action<string> onConnect;
         public event Action<string> onDisconnect;
 
-        private VideoStreamSender _sender = new(60);
+        private VideoStreamSender _videoSender = new(30);
+        private AudioStreamSender _audioSender = new();
+        private static readonly string[] IceServers = { "stun:stun.l.google.com:19302" };
 
         static WebSocketSignaling CreateSignaling() {
             return new WebSocketSignaling(SynchronizationContext.Current);
         }
 
         public SignalingManager() {
-            m_signal = CreateSignaling();
-            m_signal.OnStart += OnStart;
-            m_signal.OnCreateConnection += OnCreateConnection;
-            m_signal.OnDestroyConnection += OnDestroyConnection;
-            m_signal.OnOffer += OnOffer;
-            m_signal.OnAnswer += OnAnswer;
-            m_signal.OnIceCandidate += OnIceCandidate;
-            
-            //sender = new VideoStreamSender();
-            
+            _signal = CreateSignaling();
+            _signal.OnStart += OnStart;
+            _signal.OnCreateConnection += OnCreateConnection;
+            _signal.OnDestroyConnection += OnDestroyConnection;
+            _signal.OnOffer += OnOffer;
+            _signal.OnAnswer += OnAnswer;
+            _signal.OnIceCandidate += OnIceCandidate;
         }
 
         public override void _Ready()
         {
             base._Ready();
-            m_signal.Start();
+            _signal.Start();
             PluginUtils.InitLogger(RtcLogLevel.RTC_LOG_ERROR);
-            AddChild(_sender);
+            AddChild(_videoSender);
+            AddChild(_audioSender);
         }
 
         public void Run() {
@@ -61,7 +62,7 @@ namespace Godot.RemoteRendering
         }
 
         public void CreateConnection(string connectionId) {
-            m_signal.OpenConnection(connectionId);
+            _signal.OpenConnection(connectionId);
         }
 
         public void DeleteConnection(string connectionId) {
@@ -77,35 +78,13 @@ namespace Godot.RemoteRendering
         void OnCreateConnection(WebSocketSignaling signaling, string connectionId, bool polite)
         {
             GD.PrintRich("[color=green]On CreateConnection from " + connectionId + "[/color]");
-            PeerConnection peer = CreatePeerConnection(connectionId);
-            RtcTrackInit init = new RtcTrackInit{
-                direction = RtcDirection.RTC_DIRECTION_SENDONLY,
-                codec = RtcCodec.RTC_CODEC_H264,
-                payloadType = 102,
-                ssrc = 1,
-                name = "video-stream",
-                mid = "video-stream",
-                msid = "stream1",
-                trackId = "video-stream",
-                profile = "profile-level-id=640032;packetization-mode=1;level-asymmetry-allowed=1"
-            };
-            VideoStreamSender sender = new VideoStreamSender(30);
-            AddChild(sender);
-            sender.AddVideo(peer, init);
-            _senders.Add(sender);
-            DataChannel dc = peer.CreateDataChannel("ping-pong");
-            peer.SetLocalDescription(null);
+            // TODO
             onCreatedConnection?.Invoke(connectionId);
         }
 
         void OnDestroyConnection(WebSocketSignaling signaling, string connectionId)
         {
-            DestroyConnection(connectionId);
-        }
-
-        void DestroyConnection(string connectionId)
-        {
-            //DeletePeerConnection(connectionId);
+            DeletePeerConnection(connectionId);
             onDeletedConnection?.Invoke(connectionId);
         }
 
@@ -116,22 +95,22 @@ namespace Godot.RemoteRendering
                 _mapConnectionIdAndPeer.Remove(connectionId);
                 peer.Dispose();
             }
-            string[] servers = { "stun:stun.l.google.com:19302" };
             RtcConfiguration config = new RtcConfiguration();
-            config.iceServersCount = servers.Length;
-            config.iceServers = Marshal.AllocHGlobal(IntPtr.Size * servers.Length);
+            config.iceServersCount = IceServers.Length;
+            config.iceServers = Marshal.AllocHGlobal(IntPtr.Size * IceServers.Length);
             config.disableAutoNegotiation = true;
-            for (int i = 0; i < servers.Length; i++)
+            config.forceMediaTransport = true;
+            for (int i = 0; i < IceServers.Length; i++)
             {
-                IntPtr serverPtr = Marshal.StringToHGlobalAnsi(servers[i]);
+                IntPtr serverPtr = Marshal.StringToHGlobalAnsi(IceServers[i]);
                 Marshal.WriteIntPtr(config.iceServers, i * IntPtr.Size, serverPtr);
             }
             peer = new PeerConnection(connectionId, ref config);
             _mapConnectionIdAndPeer.Add(connectionId, peer);
 
-            peer.OnSendOffer += m_signal.SendOffer;
-            peer.OnSendAnswer += m_signal.SendAnswer;
-            peer.OnSendCandidate += m_signal.SendCandidate;
+            peer.OnSendOffer += _signal.SendOffer;
+            peer.OnSendAnswer += _signal.SendAnswer;
+            peer.OnSendCandidate += _signal.SendCandidate;
             peer.DataChannelForInput += InputReceiverAddChannel;
 
             return peer;
@@ -139,16 +118,16 @@ namespace Godot.RemoteRendering
 
         void DeletePeerConnection(string connectionId)
         {
-            
+            // TODO
         }
 
         void OnAnswer(WebSocketSignaling signaling, DescData e)
         {
-            GD.PrintRich("[color=green]I'm Got An Answer![/color]");
+            GD.PrintRich("[color=green]I Got An Answer![/color]");
             var connectionId = e.connectionId;
             if (!_mapConnectionIdAndPeer.TryGetValue(connectionId, out var pc))
             {
-                GD.PrintErr("connectionId: " + connectionId + " -----Not found PeerConnection");
+                GD.PrintErr("connectionId: " + connectionId + "-Not found PeerConnection");
                 return;
             }
             pc.SetRemoteDescription(e.sdp, "answer");
@@ -160,24 +139,21 @@ namespace Godot.RemoteRendering
             var connectionId = e.connectionId;
             if (!_mapConnectionIdAndPeer.TryGetValue(connectionId, out var pc))
             {
-                GD.PrintErr("connectionId: " + connectionId + " -----Not found PeerConnection");
+                GD.PrintErr("connectionId: " + connectionId + "-Not found PeerConnection");
                 return;
             }
-            GD.Print(e.candidate);
-            GD.Print(e.sdpMid);
             pc.AddRemoteCandidate(e.candidate, e.sdpMid);
         }
 
         void OnOffer(WebSocketSignaling signaling, DescData e)
         {
             GD.PrintRich("[color=green]I Got An Offer![/color]");
-            GD.Print(e.sdp);
             var connectionId = e.connectionId;
             if (!_mapConnectionIdAndPeer.TryGetValue(connectionId, out var pc))
             {
                 pc = CreatePeerConnection(connectionId);
             }
-            RtcTrackInit init = new RtcTrackInit{
+            RtcTrackInit video = new RtcTrackInit{
                 direction = RtcDirection.RTC_DIRECTION_SENDONLY,
                 codec = RtcCodec.RTC_CODEC_H264,
                 payloadType = 102,
@@ -188,11 +164,19 @@ namespace Godot.RemoteRendering
                 trackId = "video-stream",
                 //profile = "profile-level-id=640032;packetization-mode=1;level-asymmetry-allowed=1"
             };
-            //VideoStreamSender sender = new VideoStreamSender();
-            //AddChild(sender);
-            _sender.AddVideo(pc, init);
-            //_senders.Add(sender);
-            //DataChannel dc = pc.CreateDataChannel("input");
+            RtcTrackInit audio = new RtcTrackInit{
+                direction = RtcDirection.RTC_DIRECTION_SENDONLY,
+                codec = RtcCodec.RTC_CODEC_OPUS,
+                payloadType = 111,
+                ssrc = 2,
+                name = "audio-stream",
+                mid = "audio-stream",
+                msid = "stream1",
+                trackId = "audio-stream",
+                //profile = "profile-level-id=640032;packetization-mode=1;level-asymmetry-allowed=1"
+            };
+            _videoSender.AddVideo(pc, video);
+            _audioSender.AddAudio(pc, audio);
             pc.OnGotRemoteDescription(e.sdp, "offer");
         }
 
