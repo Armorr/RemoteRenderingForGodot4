@@ -77,7 +77,7 @@ namespace Godot.RemoteRendering
                     {
                         GD.PrintErr("AudioStreamSender: Track SetPacketizationHandler Error!");
                     }
-                    _encoder = new OpusEncoder();
+                    if (_encoder == null) _encoder = new OpusEncoder();
                     break;
                 }
                 case RtcCodec.RTC_CODEC_AAC:
