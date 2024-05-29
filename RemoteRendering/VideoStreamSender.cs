@@ -81,7 +81,7 @@ namespace Godot.RemoteRendering
                     {
                         GD.PrintErr("VideoStreamSender: Track SetPacketizationHandler Error1!");
                     }
-                    _encoder = new H264Encoder();
+                    if (_encoder == null) _encoder = new H264Encoder();
                     break;
                 }
                 case RtcCodec.RTC_CODEC_H265:
